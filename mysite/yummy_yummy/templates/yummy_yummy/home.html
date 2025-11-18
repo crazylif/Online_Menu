@@ -1,15 +1,9 @@
-{% comment %} <h1>Hiiiii</h1>
-{% if user.is_seller %}
-    <a href="{% url 'seller_menu_edit' %}">Manage Menu</a>
-{% endif %} {% endcomment %}
+{% extends "yummy_yummy/base.html" %}
 
+{% load static %}
+{% block title %}Home{% endblock %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>{{ title }}</title>
-</head>
+{% block content %}
 <body>
     <h1>Welcome to {{ shop_name }}</h1>
 
@@ -20,4 +14,4 @@
         <p>Please <a href="{% url 'login' %}">log in</a> to view the menu.</p>
     {% endif %}
 </body>
-</html>
+{% endblock content %}

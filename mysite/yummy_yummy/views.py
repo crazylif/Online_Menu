@@ -1,5 +1,9 @@
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login, logout
+from django.contrib import messages
+from django.contrib.auth.models import User
+from .models import *
 
 # In a Django view:
 def dashboard_view(request):
@@ -27,11 +31,65 @@ def home2(request):
 def base(request):
     return render(request, 'yummy_yummy/base.html')
 
-def login(request):
-    return render(request, 'yummy_yummy/login.html')
+def login_user(request):
+    context = {}
+
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            messages.success(request, "You have been logged in.")
+            context['message'] = "You have been logged in."
+            return redirect('home')
+        else:
+            messages.success(request, "There was an error, please try again!")
+            context['message'] = "username or password is incorrect."
+            return redirect('login')  
+    else:
+        return render(request, 'yummy_yummy/login.html')
+    
+def logout_user(request):
+    logout(request)
+    messages.success(request, ("You have been logged out!"))
+    return redirect('home')
 
 def register(request):
-    return render(request, 'yummy_yummy/register.html')
+    context={}
+    if request.method == 'POST':
+        data = request.POST.copy()
+        username = data.get('username')
+        email = data.get('email')
+        password = data.get('password')
+        confirmpassword = data.get('confirmpassword')
+
+        try:
+            User.objects.get(username=username)
+            context['message'] = "Username duplicate"
+        except:
+            newuser = User()
+            newuser.username = username
+            newuser.email = email
+
+            if (password == confirmpassword):
+                newuser.set_password(password)
+                newuser.save()
+                newprofile = Profile()
+                newprofile.user = User.objects.get(username=username)
+                newprofile.save()
+                context['message'] = "register completed."
+                messages.success(request, ("register completed."))
+                return redirect('login')
+            else:
+                context['message'] = "password and confirm password in incorrect."
+    return render(request, 'yummy_yummy/register.html', context)
 
 def profile(request):
     return render(request, 'yummy_yummy/profile.html')
+
+def MyRestaurant(request):
+    return render(request, 'yummy_yummy/my_restaurant.html')
+
+def RestaurantOrder(request):
+    return render(request, 'yummy_yummy/restaurant_order.html')
