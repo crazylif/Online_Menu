@@ -10,3 +10,11 @@ class Profile(models.Model):
 
   def __str__(self):
     return self.user.username
+  
+class Restaurant(models.Model):
+  Restaurant_ID = models.AutoField(primary_key=True)
+  User = models.ForeignKey(User, on_delete=models.CASCADE)
+  restaurant_name = models.CharField(max_length=255)
+
+  def __str__(self):
+    return self.restaurant_name

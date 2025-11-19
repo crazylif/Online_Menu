@@ -1,0 +1,23 @@
+{% extends "yummy_yummy/base.html" %}
+
+{% load static %}
+{% block title %} register Myrestaurant {% endblock %}
+
+{% block content %}
+    <h1>Regiter My Restaurant</h1>
+    <br>
+    <br>
+    <br>
+    <h3 class="opacity-75">Please fill the imformation</h3>
+    <form method="POST">
+        {% csrf_token %} 
+        <div class="input-group mb-3 w-75 p-3">
+            <span class="input-group-text" id="inputGroup-sizing-default">Restaurant Name</span>
+            <input id="restaurant_name" name="restaurant_name" type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+        </div>
+        <div class="d-grid gap-2 col-6 mx-auto">
+            <button type="submit" class="btn btn-success mx-auto">Confirm</button>
+        </div>
+    </form>
+
+{% endblock %}

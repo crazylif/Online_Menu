@@ -1,6 +1,6 @@
 {% load static %}
 
-<header class="p-2 mb-3 border-bottom">
+<header class="p-1 mb-0 border-bottom">
     <div class="container">
         <div class="position-relative d-flex align-items-center justify-content-between"> 
             
@@ -19,7 +19,7 @@
                 {% if user.profile.usertype == 'seller' %}
                 <li><a href="{% url 'my-restaurant' %}" class="nav-link px-2 link-body-emphasis">My restaurant</a></li>
                 {% endif %}
-                {% if user.profile.usertype == 'user' %}
+                {% if user.profile.usertype == "user" or user.profile.usertype == "admin" %}
                 <li><a href="#" class="nav-link px-2 link-body-emphasis">My Orders</a></li>
                 {% endif %}
                 {% if user.profile.usertype == 'seller' %}
@@ -39,9 +39,14 @@
                     {% if user.is_authenticated %}
                         <ul class="dropdown-menu text-small">
                             <li><a class="dropdown-item" href="#">{{ user.username }} | {{ user.profile.usertype }}</a></li>
-                            <li><a class="dropdown-item" href="#">New project...</a></li>
+                            {% if user.profile.usertype != 'seller' %}
+                                <li><a class="dropdown-item" href="{% url 'register-myrestaurant' %}">register my restaurant</a></li>
+                            {% endif %}
+                            {% if user.profile.usertype == 'seller' %}
+                                <li><a class="dropdown-item" href="#">setting my restaurant</a></li>
+                            {% endif %}
                             {% if user.profile.usertype == 'admin' %}
-                            <li><a class="dropdown-item" href="#">Settings</a></li>
+                                <li><a class="dropdown-item" href="#">Settings</a></li>
                             {% endif %}
                             <li><a class="dropdown-item" href="#">Profile</a></li>
                             <li><hr class="dropdown-divider"></li>

@@ -19,7 +19,7 @@ def home(request):
     # Data to pass to the template
     context = {
         'title': 'Food Shop Home',
-        'shop_name': 'Yummy Yummy Online Menu'
+        'shop_name': 'Yummy! Online Menu'
     }
 
     # Renders the template located at yummy_yummy/templates/yummy_yummy/home.html
@@ -89,7 +89,44 @@ def profile(request):
     return render(request, 'yummy_yummy/profile.html')
 
 def MyRestaurant(request):
-    return render(request, 'yummy_yummy/my_restaurant.html')
+    has_restaurant = Restaurant.objects.filter(User=request.user).exists()
+    res_name = Restaurant.objects.get(User=request.user.id)
+    res_name = res_name.restaurant_name
+
+    return render(request, 'yummy_yummy/my_restaurant.html', {
+        'has_restaurant': has_restaurant,
+        'name': res_name
+    })
+
+def register_MyRestaurant(request):
+    context={}
+    if request.method == 'POST':
+        data = request.POST.copy()
+        restaurant_name = data.get('restaurant_name')
+        
+        
+        if Restaurant.objects.filter(restaurant_name=restaurant_name).exists():
+            context['message'] = "Restaurant name is duplicated."
+            messages.success(request, ("Restaurant name is duplicated."))
+            return render(request, 'yummy_yummy/register_Myrestaurant.html', context)
+    
+        # Create restaurant linked to the logged-in user
+        Restaurant.objects.create(
+            User_id=request.user.id,
+            restaurant_name=restaurant_name
+        )
+        # Update profile usertype
+        profile = Profile.objects.get(user=request.user)
+        profile.usertype = "seller"
+        profile.save()
+
+        messages.success(request, ("regiter restaurant completed."))
+        return redirect('my-restaurant')
+
+    return render(request, 'yummy_yummy/register_Myrestaurant.html', context)
+
+def add_product(request):
+    return render(request, 'yummy_yummy/add_product.html')
 
 def RestaurantOrder(request):
     return render(request, 'yummy_yummy/restaurant_order.html')

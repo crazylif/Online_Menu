@@ -14,5 +14,7 @@ urlpatterns = [
   path('register/', register, name="register"),
   path('profile/', profile, name="profile"),
   path('myrestaurant/', MyRestaurant, name="my-restaurant" ),
+  path('registerMyrestaurant/', register_MyRestaurant, name="register-myrestaurant"),
+  path('addProduct/', add_product, name="add-product"),
   path('order/', RestaurantOrder, name="restaurant-order"),
 ]
