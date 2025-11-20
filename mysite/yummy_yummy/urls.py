@@ -6,15 +6,15 @@ from .views import *
 from . import views
 
 urlpatterns = [
-  path('', views.home, name='home'),
+  path('', home, name='home'),
   path('home2/', home2, name="home2"),
   path('base/', base, name="base"),
   path('login/', login_user, name="login"),
   path('logout/', logout_user, name="logout"),
   path('register/', register, name="register"),
   path('profile/', profile, name="profile"),
-  path('myrestaurant/', MyRestaurant, name="my-restaurant" ),
+  path('myrestaurant/<int:res_id>/', MyRestaurant, name="my-restaurant" ),
   path('registerMyrestaurant/', register_MyRestaurant, name="register-myrestaurant"),
-  path('addProduct/', add_product, name="add-product"),
+  path('myrestaurant/<int:res_id>/addproduct/', add_product, name='add-product'),
   path('order/', RestaurantOrder, name="restaurant-order"),
 ]

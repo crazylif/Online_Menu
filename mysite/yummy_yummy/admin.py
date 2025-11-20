@@ -7,3 +7,4 @@ from .models import *
 
 admin.site.register(Profile)
 admin.site.register(Restaurant)
+admin.site.register(Product)

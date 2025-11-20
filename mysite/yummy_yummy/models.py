@@ -18,3 +18,15 @@ class Restaurant(models.Model):
 
   def __str__(self):
     return self.restaurant_name
+  
+class Product(models.Model):
+  Product_ID = models.AutoField(primary_key=True)
+  Restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, null=False)
+  title = models.CharField(max_length=100)
+  picture = models.ImageField(upload_to='product')
+  description = models.CharField(max_length=255)
+  price = models.FloatField()
+  available = models.BooleanField(default=True)
+
+  def __str__(self):
+    return self.title
