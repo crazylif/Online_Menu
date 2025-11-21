@@ -20,7 +20,42 @@ def dashboard_view(request):
 # Create your views here.
 def home(request):
     # Data to pass to the template
+    # allproduct = Product.objects.all()
+    # allproduct = Product.objects.select_related('Restaurant').all() #join Product and Restaurant table
+    query = request.GET.get('q', '')
+
+    if query:
+        allproduct = Product.objects.select_related('Restaurant').filter(
+            Restaurant=query
+        )
+    else:
+        allproduct = Product.objects.select_related('Restaurant').all()
+
+    product_per_page = 100
+    paginator = Paginator(allproduct, product_per_page)
+    page = request.GET.get('page')
+    allproduct = paginator.get_page(page)
+
+    print("herererr: ",allproduct)
+    context = {'allproduct': allproduct}   
+
+    allrow = []
+    row = []
+    for i,p in enumerate(allproduct):
+        if i % 3 ==0:
+            if i != 0:
+                allrow.append(row)
+            row = []
+            row.append(p)
+        else:
+            row.append(p)
+
+    allrow.append(row)
+    context['allrow'] = allrow
+
     context = {
+        'allrow': allrow,
+        'allproduct': allproduct,
         'title': 'Food Shop Home',
         'shop_name': 'Yummy! Online Menu'
     }
@@ -28,11 +63,9 @@ def home(request):
     # Renders the template located at yummy_yummy/templates/yummy_yummy/home.html
     return render(request, 'yummy_yummy/home.html', context)
 
-# def header(request):
-#     my_restaurant = Restaurant.objects.all()
-#     return render(request, 'yummy_yummy/header.html',{
-#         'res_id': my_restaurant,
-#     })
+def fillterSearch(request):
+    
+    return render(request, 'yummy_yummy/home.html',)
 
 def home2(request):
   return HttpResponse('<h1 style="color:red; font-size: 300%;">Hello World</h1>')
