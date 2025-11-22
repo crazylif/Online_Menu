@@ -1,5 +1,6 @@
 from django.http import HttpResponse
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.models import User
@@ -240,5 +241,121 @@ def add_product(request, res_id):
 
     return render(request, 'yummy_yummy/add_product.html', context)
 
+def add_to_cart(request, product_id):
+    product = get_object_or_404(Product, Product_ID=product_id)
+    restaurant = product.Restaurant
+
+    cart_item, created = Cart.objects.get_or_create(
+        user = request.user,
+        product = product,
+        product_name = product.title,
+        restaurant = restaurant
+    )
+
+    if not created:
+        cart_item.quantity += 1
+        cart_item.save()
+
+    return redirect('cart_page')
+
+def add_quantity(request, cart_id):
+    item = get_object_or_404(Cart, id=cart_id, user=request.user)
+    item.quantity += 1 
+    item.save()
+    return redirect('cart_page')
+
+def minus_quantity(request, cart_id):
+    item = get_object_or_404(Cart, id=cart_id, user=request.user)
+    if item.quantity > 1:
+        item.quantity -= 1
+        item.save() 
+    else:
+        item.delete()
+    return redirect('cart_page')
+
+def delete_cart_item(request, cart_id):
+    item = get_object_or_404(Cart, id=cart_id, user=request.user)
+    item.delete()
+    return redirect('cart_page')
+
+def cart_page(request):
+    cart_item = Cart.objects.filter(user=request.user)
+    
+    total_price = sum(item.subtotal() for item in cart_item)
+
+    context = {
+        'cart_items': cart_item,
+        'total_price': total_price,
+
+    }
+    return render(request, 'yummy_yummy/cart.html', context)
+
+def payout(request):
+    cart_items = Cart.objects.filter(user=request.user)
+    
+
+    if not cart_items.exists():
+        messages.error(request, "Your cart is empty.")
+        return redirect('cart_page')
+
+    # Calculate total price
+    total_price = sum(item.subtotal() for item in cart_items)
+
+    # Create an Order for each cart item
+    for item in cart_items:
+        Order.objects.create(
+            Restaurant=item.restaurant,
+            User=item.user,
+            Product=item.product,
+            title=item.product.title,                     # From Product model
+            picture=item.product.picture,                 # ImageField
+            restaurant_name=item.restaurant.restaurant_name,
+            user_name=item.user.username,
+            price = item.product.price,
+            quatity=item.quantity,
+            total_price=item.subtotal(),                  # Subtotal per item
+            status='Wait'
+        )
+
+    cart_items.delete()
+
+    return render(request, 'yummy_yummy/pay_successful.html')
+
+def myOrder(request):
+    
+    myorder = Order.objects.filter(User=request.user).order_by('-created_at')
+
+    product_per_page = 100
+    paginator = Paginator(myorder, product_per_page)
+    page = request.GET.get('page')
+    myorder = paginator.get_page(page)
+
+    print("herererr: ",myorder)
+    context = {'myorder': myorder}   
+
+    allcol = []
+    row = []
+    for i,p in enumerate(myorder):
+        if i % 3 ==0:
+            if i != 0:
+                allcol.append(row)
+            row = []
+            row.append(p)
+        else:
+            row.append(p)
+
+    allcol.append(row)
+    context['allcol'] = allcol
+    print("herereee: ",allcol)
+
+    context = {
+        'allcol': allcol,
+        'myorder': myorder,
+        'title': 'Food Shop Home',
+        'shop_name': 'Yummy! Online Menu'
+    }
+    return render(request, 'yummy_yummy/my_order.html', context)
+
 def RestaurantOrder(request):
+
     return render(request, 'yummy_yummy/restaurant_order.html')

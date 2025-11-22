@@ -16,5 +16,12 @@ urlpatterns = [
   path('myrestaurant/<int:res_id>/', MyRestaurant, name="my-restaurant" ),
   path('registerMyrestaurant/', register_MyRestaurant, name="register-myrestaurant"),
   path('myrestaurant/<int:res_id>/addproduct/', add_product, name='add-product'),
-  path('order/', RestaurantOrder, name="restaurant-order"),
+  path('add-to-cart/<int:product_id>', add_to_cart, name='add_to_cart' ),
+  path('add_quantity/<int:cart_id>', add_quantity, name='add_quantity' ),
+  path('minus_quantity/<int:cart_id>', minus_quantity, name='minus_quantity' ),
+  path('delete_cart_item/<int:cart_id>', delete_cart_item, name='delete_cart_item' ),
+  path('cart/', cart_page, name='cart_page'),
+  path('pay/', payout, name="pay_cart"),
+  path('my-order/', myOrder, name="my_order"),
+  path('order/', RestaurantOrder, name="restaurant_order"),
 ]

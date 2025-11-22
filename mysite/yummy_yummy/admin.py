@@ -8,3 +8,5 @@ from .models import *
 admin.site.register(Profile)
 admin.site.register(Restaurant)
 admin.site.register(Product)
+admin.site.register(Cart)
+admin.site.register(Order)

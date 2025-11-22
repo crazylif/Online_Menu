@@ -1,0 +1,9 @@
+{% extends "yummy_yummy/base.html" %}
+
+{% load static%}
+{% block title %}Pay success{% endblock %}
+
+{% block content %}
+    <h1>Payment successful.<a href="{% url 'my_order' %}">Go to my order</a></h1> 
+
+{% endblock %}
