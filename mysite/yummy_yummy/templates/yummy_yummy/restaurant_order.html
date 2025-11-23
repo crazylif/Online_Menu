@@ -1,8 +1,137 @@
 {% extends "yummy_yummy/base.html" %}
 
 {% load static %}
+{% block title %}My order{% endblock title %}
 
-{% block contant %}
+{% block content %}
+    {% if user.is_authenticated %}
+        <p>Hello, {{ user.username }}! Here are the order items:</p>
+        {% if user.profile.usertype == 'seller' or user.profile.usertype == 'admin' %}
+            <div class="container">
+                <br>
+                {% for col in allcol %}
+                    {% for c in col %}
+                    <br>
+                    <div class="row ">
+                        <div class="col-3 border">
+                            {% if c.picture %}
+                                <img src="{{c.picture.url}}" height="200" alt="picture" class="card-img-top">
+                            {% endif %}
+                        </div>
+                        <div style="grid-template-columns: 1fr 1fr 1fr;"  class="col-9 border d-grid gap-0 column-gap-0">
+                            <p class="fs-4 mt-2">{{c.title}}</p>
+                            <p class="mt-2">Order id: {{c.Order}}</p>
+                            {% if c.status == 'Wait' %}
+                            <div >
+                                <p class="mt-2 fs-5 badge text-bg-primary text-wrap" style="width: 13rem; ">Status: Wait</p>
+                            </div>
+                            {% endif %}
+                            {% if c.status == 'Cooking' %}
+                            <div >
+                                <p class="mt-2 fs-5 badge text-bg-warning text-wrap" style="width: 13rem; ">Status: Cooking</p>
+                            </div>
+                            {% endif %}
+                            <p class="fw-normal p-1">Price: {{c.price}}฿</p>
+                            <p class="fw-normal p-1">quantity: {{c.quatity}}</p>
+                            <p class="fw-normal p-1"></p>
+                            <p class="fw-normal p-1">Total price: {{c.total_price}}฿</p>
+                            <p class="fw-normal p-1"></p>
+                            <p class="fw-normal p-1"></p>
+                            <p class="fw-normal p-1">Restaurant: {{c.restaurant_name}}</p>
+                            
+                            <div >
+                                <a href="{% url 'cancel_order' c.Order %}">
+                                    <button type="button" class="mb-2 btn btn-danger">Cancel</button>
+
+                                </a>
+                            </div>
+                            {% if c.status == 'Wait' %}
+                            <div >
+                                <a href="{% url 'cook_order' c.Order %}">
+                                    <button type="button" class="mb-2 btn btn-warning">Cook</button>
+                                </a>
+                            </div>
+                            {% endif %}
+                            {% if c.status == 'Cooking' %}
+                            <div >
+                                <a href="{% url 'done_order' c.Order %}">
+                                    <button type="button" class="mb-2 btn btn-success">Done</button>
+
+                                </a>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% endfor %}
+            </div>
+            <br>
+            <br>
+            <br>
+
+            <hr>
+            <p>DEBUG: {{ order }}</p>
+            <p>Has next: {{ order.has_next }}</p>
+            <p>Has previous: {{ order.has_previous }}</p>
+            <p>Total pages: {{ order.paginator.num_pages }}</p>
+
+            <nav aria-label="...">
+                <ul class="pagination">
+                {% if order.has_previous %}
+                    <li class="page-item">
+                    <a class="page-link" href="?page={{ order.previous_page_number }}">Previous</a>
+                    </li>
+
+                    {% if order.number|add:-2 > 0  %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{order.number|add:-2}}">{{order.number|add:-2}}</a>
+                        </li>
+                    {% endif %}
+
+                    {% if order.number > 1  %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{order.number|add:-1}}">{{order.number|add:-1}}</a>
+                        </li>
+                    {% endif %}
+
+                    {% if order.has_next != True %}
+                        <li class="page-item active">
+                        <a class="page-link" href="{{order.number}}">{{order.number}}</a>
+                        </li>
+                    {% endif %}
+
+                {% endif %}  
 
 
-{% endblock contant %}
+                {% if order.has_next %}
+                    <li class="page-item active">
+                    <a class="page-link" href="{{order.number}}">{{order.number}}</a>
+                    </li>
+
+                    {% if order.paginator.num_pages > order.number %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{order.number|add:1}}">{{order.number|add:1}}</a>
+                    </li>
+                    {% endif %}
+
+                    {% if order.paginator.num_pages > order.number|add:1 %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{order.number|add:2}}">{{order.number|add:2}}</a>
+                    </li>
+                    {% endif %}
+
+                    <li class="page-item">
+                    <a class="page-link" href="?page={{order.number|add:1}}">Next</a>
+                    </li>
+                {% endif %}
+
+                </ul>
+                <p> page {{order.number}} from {{order.paginator.num_pages}} </p>
+            </nav>
+        {% endif %}
+
+    {% else %}
+        <p>Please <a href="{% url 'login' %}">log in</a> to view the menu.</p>
+    {% endif %}
+
+{% endblock content %}

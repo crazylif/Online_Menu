@@ -10,6 +10,9 @@
     {# DTL Logic: Checks if the user is authenticated #}
     {% if user.is_authenticated %}
         <p>Hello, {{ user.username }}! Here are the menu items:</p>
+        {% if user.profile.usertype == 'seller' %}
+        <p>You are the seller! <a href="{% url 'my-restaurant' res_id=my_restaurant.Restaurant_ID %}">Go to my restaurant</a></p>
+        {% endif %}
         {% if user.profile.usertype == 'user' or user.profile.usertype == 'admin' %}
             <br>
             <center>

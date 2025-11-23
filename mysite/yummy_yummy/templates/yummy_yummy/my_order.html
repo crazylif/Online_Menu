@@ -21,9 +21,16 @@
                         <div style="grid-template-columns: 1fr 1fr 1fr;"  class="col-9 border d-grid gap-0 column-gap-0">
                             <p class="fs-4 mt-2">{{c.title}}</p>
                             <br>
+                            {% if c.status == 'Wait' %}
                             <div >
                                 <p class="mt-2 fs-5 badge text-bg-primary text-wrap" style="width: 13rem; ">Status: Wait</p>
                             </div>
+                            {% endif %}
+                            {% if c.status == 'Cooking' %}
+                            <div >
+                                <p class="mt-2 fs-5 badge text-bg-warning text-wrap" style="width: 13rem; ">Status: Cooking</p>
+                            </div>
+                            {% endif %}
                             <p class="fw-normal p-1">Price: {{c.price}}฿</p>
                             <p class="fw-normal p-1">quantity: {{c.quatity}}</p>
                             <p class="fw-normal p-1"></p>

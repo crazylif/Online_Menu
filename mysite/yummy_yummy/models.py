@@ -59,3 +59,21 @@ class Order(models.Model):
 
   def __str__(self):
     return self.title
+  
+class Order_history(models.Model):
+  Order = models.AutoField(primary_key=True)
+  Restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
+  User = models.ForeignKey(User, on_delete=models.CASCADE)
+  Product = models.ForeignKey(Product, on_delete=models.CASCADE)
+  title = models.CharField(max_length=255)
+  picture = models.ImageField(upload_to='product')
+  restaurant_name = models.CharField(max_length=255)
+  user_name = models.CharField(max_length=100)
+  price = models.FloatField(default=0)
+  quatity = models.IntegerField()
+  total_price = models.FloatField()
+  status =models.CharField(default='Wait')
+  created_at = models.DateTimeField(default=timezone.now)
+
+  def __str__(self):
+    return self.title

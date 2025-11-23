@@ -16,6 +16,7 @@ urlpatterns = [
   path('myrestaurant/<int:res_id>/', MyRestaurant, name="my-restaurant" ),
   path('registerMyrestaurant/', register_MyRestaurant, name="register-myrestaurant"),
   path('myrestaurant/<int:res_id>/addproduct/', add_product, name='add-product'),
+  path('delete/<int:product_id>', delete_product, name='delete-product'),
   path('add-to-cart/<int:product_id>', add_to_cart, name='add_to_cart' ),
   path('add_quantity/<int:cart_id>', add_quantity, name='add_quantity' ),
   path('minus_quantity/<int:cart_id>', minus_quantity, name='minus_quantity' ),
@@ -23,5 +24,9 @@ urlpatterns = [
   path('cart/', cart_page, name='cart_page'),
   path('pay/', payout, name="pay_cart"),
   path('my-order/', myOrder, name="my_order"),
-  path('order/', RestaurantOrder, name="restaurant_order"),
+  path('myrestaurant/<int:res_id>/order/', RestaurantOrder, name="restaurant_order"),
+  path('cook_order/<int:order_id>', Cook_order, name="cook_order"),
+  path('done_order/<int:order_id>', Done_order, name="done_order"),
+  path('cancel_order/<int:order_id>', Cancel_order, name="cancel_order"),
+
 ]

@@ -241,6 +241,13 @@ def add_product(request, res_id):
 
     return render(request, 'yummy_yummy/add_product.html', context)
 
+def delete_product(requst, product_id):
+    this_product = get_object_or_404(Product, Product_ID=product_id)
+    this_product.delete()
+    res_id = this_product.Restaurant.Restaurant_ID
+
+    return redirect('my-restaurant',res_id=res_id)
+
 def add_to_cart(request, product_id):
     product = get_object_or_404(Product, Product_ID=product_id)
     restaurant = product.Restaurant
@@ -286,7 +293,6 @@ def cart_page(request):
     context = {
         'cart_items': cart_item,
         'total_price': total_price,
-
     }
     return render(request, 'yummy_yummy/cart.html', context)
 
@@ -356,6 +362,100 @@ def myOrder(request):
     }
     return render(request, 'yummy_yummy/my_order.html', context)
 
-def RestaurantOrder(request):
+def RestaurantOrder(request,res_id):
+    order = Order.objects.filter(Restaurant_id=res_id).order_by('-created_at')
 
-    return render(request, 'yummy_yummy/restaurant_order.html')
+    product_per_page = 100
+    paginator = Paginator(order, product_per_page)
+    page = request.GET.get('page')
+    order = paginator.get_page(page)
+
+    print("herererr: ",order)
+    context = {'myorder': order}   
+
+    allcol = []
+    row = []
+    for i,p in enumerate(order):
+        if i % 3 ==0:
+            if i != 0:
+                allcol.append(row)
+            row = []
+            row.append(p)
+        else:
+            row.append(p)
+
+    allcol.append(row)
+    context['allcol'] = allcol
+    print("herereee: ",allcol)
+
+    context = {
+        'allcol': allcol,
+        'order': order,
+        'title': 'Food Shop Home',
+        'shop_name': 'Yummy! Online Menu'
+    }
+
+    return render(request, 'yummy_yummy/restaurant_order.html', context)
+
+def Cook_order(request,order_id):
+    this_order = get_object_or_404(Order, Order=order_id)
+    this_order.status = 'Cooking'
+    this_order.save()
+    print("cookiiiinggggg")
+
+    res_id = this_order.Restaurant.Restaurant_ID
+    return redirect('restaurant_order', res_id=res_id)
+
+def Done_order(request,order_id):  
+    this_order = get_object_or_404(Order, Order=order_id)
+    this_order.status = 'Done'
+    this_order.save()
+
+    order = Order.objects.filter(Order=order_id)
+
+    for item in order:
+        Order_history.objects.create(
+            Restaurant=item.Restaurant,
+            User=item.User,
+            Product=item.Product,
+            title=item.title,                     # From Product model
+            picture=item.picture,                 # ImageField
+            restaurant_name=item.restaurant_name,
+            user_name=item.user_name,
+            price = item.price,
+            quatity=item.quatity,
+            total_price=item.total_price,                  # Subtotal per item
+            status='Done'
+        )
+
+    this_order.delete()
+    
+    res_id = this_order.Restaurant.Restaurant_ID
+    return redirect('restaurant_order', res_id=res_id)
+
+def Cancel_order(request,order_id):
+    this_order = get_object_or_404(Order, Order=order_id)
+    this_order.status = 'Cancel'
+    this_order.save()
+
+    order = Order.objects.filter(Order=order_id)
+
+    for item in order:
+        Order_history.objects.create(
+            Restaurant=item.Restaurant,
+            User=item.User,
+            Product=item.Product,
+            title=item.title,                     # From Product model
+            picture=item.picture,                 # ImageField
+            restaurant_name=item.restaurant_name,
+            user_name=item.user_name,
+            price = item.price,
+            quatity=item.quatity,
+            total_price=item.total_price,                  # Subtotal per item
+            status='Cancel'
+        )
+
+    this_order.delete()
+    
+    res_id = this_order.Restaurant.Restaurant_ID
+    return redirect('restaurant_order', res_id=res_id)
