@@ -459,3 +459,52 @@ def Cancel_order(request,order_id):
     
     res_id = this_order.Restaurant.Restaurant_ID
     return redirect('restaurant_order', res_id=res_id)
+
+def order_history(request):
+    usertype = Profile.objects.get(user=request.user).usertype
+
+    my_history_order = None
+
+    if usertype == 'user':
+        my_history_order = Order_history.objects.filter(User=request.user).order_by('-created_at')
+    elif usertype == 'seller':
+        res_id = Restaurant.objects.get(User=request.user).Restaurant_ID
+        print("thissss: ", res_id)
+        my_history_order = Order_history.objects.filter(Restaurant=res_id).order_by('-created_at')
+    else:
+        return redirect('login')
+    
+
+    product_per_page = 100
+    paginator = Paginator(my_history_order, product_per_page)
+    page = request.GET.get('page')
+    my_history_order = paginator.get_page(page)
+
+    print("herererr: ",my_history_order)
+    context = {'myorder': my_history_order}   
+
+    allcol = []
+    row = []
+    for i,p in enumerate(my_history_order):
+        if i % 3 ==0:
+            if i != 0:
+                allcol.append(row)
+            row = []
+            row.append(p)
+        else:
+            row.append(p)
+
+    allcol.append(row)
+    context['allcol'] = allcol
+    print("herereee: ",allcol)
+
+    context = {
+        'allcol': allcol,
+        'my_history_order': my_history_order,
+        'title': 'Food Shop Home',
+        'shop_name': 'Yummy! Online Menu'
+    }
+    
+
+    return render(request,'yummy_yummy/order_history.html', context)
+    

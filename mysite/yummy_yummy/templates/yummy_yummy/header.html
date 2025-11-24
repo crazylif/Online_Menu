@@ -1,6 +1,7 @@
 {% load static %}
 
 <header class="p-1 mb-0 border-bottom">
+    
     <div class="container">
         <div class="position-relative d-flex align-items-center justify-content-between"> 
             
@@ -15,7 +16,12 @@
             
             <ul class="nav col-lg-auto me-lg-4 justify-content-center"> 
                 <li><a href="#" class="nav-link px-2 link-secondary">Overview</a></li>
-                <li><a href="#" class="nav-link px-2 link-body-emphasis">History</a></li>
+                {% if user.profile.usertype == 'seller' %}
+                <li><a href="{% url 'order_history' %}" class="nav-link px-2 link-body-emphasis">History</a></li>
+                {% endif %}
+                {% if user.profile.usertype == 'user' %}
+                <li><a href="{% url 'order_history'  %}" class="nav-link px-2 link-body-emphasis">History</a></li>
+                {% endif %}
                 {% if user.profile.usertype == 'seller' %}
                 <li><a href="{% url 'my-restaurant' res_id=my_restaurant.Restaurant_ID %}" class="nav-link px-2 link-body-emphasis">My restaurant</a></li>
                 {% endif %}
