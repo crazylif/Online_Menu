@@ -87,7 +87,7 @@ def login_user(request):
             context['message'] = "You have been logged in."
             return redirect('home')
         else:
-            messages.success(request, "There was an error, please try again!")
+            messages.success(request, "User or Password is incorrect, please try again!")
             context['message'] = "username or password is incorrect."
             return redirect('login')  
     else:
@@ -196,7 +196,7 @@ def register_MyRestaurant(request):
         profile.save()
 
         messages.success(request, ("regiter restaurant completed."))
-        return redirect('my-restaurant')
+        return redirect('home')
 
     return render(request, 'yummy_yummy/register_Myrestaurant.html', context)
 
@@ -507,4 +507,8 @@ def order_history(request):
     
 
     return render(request,'yummy_yummy/order_history.html', context)
+
+def overview(request):
+
+    return render(request, 'yummy_yummy/overview.html') 
     

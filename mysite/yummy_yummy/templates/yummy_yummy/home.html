@@ -30,7 +30,7 @@
                             <p class="card-text">
                             price : {{ c.price }} ฿ <br>
                             {% comment %} description : {{ c.description }} <br> {% endcomment %}
-                            available : {{ c.available }} <br>
+                            {% comment %} available : {{ c.available }} <br> {% endcomment %}
                             by restaurant : {{ c.Restaurant.restaurant_name }} | id : {{ c.Restaurant_id }}
                             </p>
                             <a href="#" class="btn btn-primary">more detail</a>
